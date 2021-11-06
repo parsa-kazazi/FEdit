@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # FEdit: A pro text editor with tkinter library
 # Coded by parsa kazazi
 # GitHub: https://github.com/parsa-kazazi
@@ -27,8 +25,7 @@ class FEdit:
         except:
             pass
 
-        self.width = 1000
-        self.height = 600
+        self.width = 1000; self.height = 600
 
         screen_width = self.window.winfo_screenwidth()
         screen_height = self.window.winfo_screenheight()
@@ -36,9 +33,7 @@ class FEdit:
         left = (screen_width / 2) - (self.width / 2)
         top = (screen_height / 2) - (self.height / 2)
 
-        self.window.geometry('%dx%d+%d+%d' % (self.width,
-                                              self.height,
-                                              left, top))
+        self.window.geometry('%dx%d+%d+%d' % (self.width, self.height, left, top))
         
         self.font = (None, 10)
         self.wrap = True
@@ -91,10 +86,10 @@ class FEdit:
         encoding_menu.add_command(label="ASCII", command=lambda: self.change_encoding("ASCII"))
         encoding_menu.add_command(label="ISO 8859-1", command=lambda: self.change_encoding("ISO-8859-1"))
         encoding_menu.add_command(label="Windows-1250", command=lambda: self.change_encoding("Windows-1250"))
-        encoding_menu.add_command(label="GBK (Chinese)", command=lambda: self.change_encoding("GBK"))
-        encoding_menu.add_command(label="ISO-2022-JP-2004 (Japanese)", command=lambda: self.change_encoding("ISO-2022-JP-2004"))
-        encoding_menu.add_command(label="KS X 1001 (Korean)", command=lambda: self.change_encoding("KS-X-1001"))
-        encoding_menu.add_command(label="BIG 5 (Taiwan)", command=lambda: self.change_encoding("BIG5"))
+        encoding_menu.add_command(label="GBK", command=lambda: self.change_encoding("GBK"))
+        encoding_menu.add_command(label="ISO-2022-JP-2004", command=lambda: self.change_encoding("ISO-2022-JP-2004"))
+        encoding_menu.add_command(label="KS X 1001", command=lambda: self.change_encoding("KS-X-1001"))
+        encoding_menu.add_command(label="BIG 5", command=lambda: self.change_encoding("BIG5"))
 
         settings_menu = Menu(self.menubar, self.menubar, tearoff=0, font=self.font)
         settings_menu.add_cascade(label="Theme", menu=theme_menu)
@@ -120,12 +115,12 @@ class FEdit:
 
         self.text_input = Text(self.window, wrap=NONE, yscrollcommand=scroll_bar_y.set, xscrollcommand=scroll_bar_x.set, undo=True, bd=1)
 
-        self.text_input.bind("<Button-3>", self.show_rightclick_menu)
+        self.text_input.bind("<Button-3>", self.rightclick_menu)
 
         self.window.grid_rowconfigure(0, weight=1)
         self.window.grid_columnconfigure(0, weight=1)
 
-        self.text_input.grid(sticky=N+E+S+W, row=0, column=0)
+        self.text_input.grid(row=0, column=0, sticky=N+E+S+W)
 
         scroll_bar_y.config(command=self.text_input.yview)
         scroll_bar_x.config(command=self.text_input.xview)
@@ -192,8 +187,7 @@ class FEdit:
 
         self.show_info()
     
-    def reload(self):
-        self.load_file(self.fileaddr)
+    def reload(self): self.load_file(self.fileaddr)
     
     def close(self):
         self.file = None
@@ -202,23 +196,22 @@ class FEdit:
         self.change_title()
         self.info_label.configure(text="")
     
-    def change_title(self):
-        self.window.title(self.filename + " - FEdit")
+    def change_title(self): self.window.title(self.filename + " - FEdit")
     
-    def show_rightclick_menu(self, event):
-        rightclick_menu = Menu(self.window, tearoff=0, cursor="left_ptr")
-        rightclick_menu.add_command(label="Copy", command=self.copy)
-        rightclick_menu.add_command(label="Cut", command=self.cut)
-        rightclick_menu.add_command(label="Paste", command=self.paste)
-        rightclick_menu.add_command(label="Paste selection", command=self.paste_selection)
-        rightclick_menu.add_command(label="Select All", command=self.select_all)
-        rightclick_menu.add_separator()
-        rightclick_menu.add_command(label="Cancel", command=rightclick_menu.destroy)
+    def rightclick_menu(self, event):
+        menu = Menu(self.window, tearoff=0, cursor="left_ptr")
+        menu.add_command(label="Copy", command=self.copy)
+        menu.add_command(label="Cut", command=self.cut)
+        menu.add_command(label="Paste", command=self.paste)
+        menu.add_command(label="Paste Selection", command=self.paste_selection)
+        menu.add_command(label="Select All", command=self.select_all)
+        menu.add_separator()
+        menu.add_command(label="Cancel", command=menu.destroy)
 
         try:
-            rightclick_menu.tk_popup(event.x_root, event.y_root)
+            menu.tk_popup(event.x_root, event.y_root)
         finally:
-            rightclick_menu.grab_release()
+            menu.grab_release()
     
     def show_info(self):
         self.info_label2.configure(text="Encoding: " + self.encoding)
@@ -226,11 +219,7 @@ class FEdit:
             pass
         else:
             file_size = os.stat(self.fileaddr).st_size
-            lines = open(self.fileaddr, "r", encoding=self.encoding).readlines()
-            file_lines = 0
-
-            for line in lines:
-                file_lines += 1
+            file_lines = len(open(self.fileaddr, "r", encoding=self.encoding).readlines())
             
             self.info_label.configure(text="File \"" + self.fileaddr + "\" : " + str(file_size) + " Byte(s) , " + str(file_lines) + " Line(s)")
     
@@ -247,7 +236,7 @@ class FEdit:
             self.text_input.configure(bg="#ffffff", fg="#000000", insertbackground="#000000")
             self.theme = "light"
         elif theme == "dark":
-            self.text_input.configure(bg="#202025", fg="#ffffff", insertbackground="#ffffff")
+            self.text_input.configure(bg="#202020", fg="#ffffff", insertbackground="#ffffff")
             self.theme = "dark"
         elif theme == "high contrast":
             self.text_input.configure(bg="#000000", fg="#ffffff", insertbackground="#ffffff")
@@ -257,7 +246,17 @@ class FEdit:
         self.text_input.configure(font=(self.editor_font, font_size))
     
     def show_about(self):
-        messagebox.showinfo("About", "FEdit: A pro text editor with tkinter library.\n\nGithub:\ngithub.com/parsa-kazazi/FEdit")
+        messagebox.showinfo("About", "FEdit: A pro text editor using tkinter library.\n\nGithub:\ngithub.com/parsa-kazazi/FEdit")
+
+    def copy(self): self.text_input.event_generate("<<Copy>>")
+
+    def cut(self): self.text_input.event_generate("<<Cut>>")
+
+    def paste(self): self.text_input.event_generate("<<Paste>>")
+
+    def paste_selection(self): self.text_input.event_generate("<<Copy>>"); self.text_input.event_generate("<<Paste>>")
+    
+    def select_all(self): self.text_input.event_generate("<<SelectAll>>")
     
     def undo(self):
         try:
@@ -271,31 +270,19 @@ class FEdit:
         except:
             pass
     
-    def copy(self):
-        self.text_input.event_generate("<<Copy>>")
-
-    def cut(self):
-        self.text_input.event_generate("<<Cut>>")
-    
-    def paste(self):
-        self.text_input.event_generate("<<Paste>>")
-    
-    def paste_selection(self):
-        self.text_input.event_generate("<<Copy>>")
-        self.text_input.event_generate("<<Paste>>")
-    
-    def select_all(self):
-        self.text_input.event_generate("<<SelectAll>>")
-    
     def find(self):
         self.find_window = Tk()
         self.find_window.title("Find")
         self.find_window.geometry("300x70")
+
         Label(self.find_window, text="Find: ", font=self.font).grid(row=0, column=0)
+
         self.find_entry = Entry(self.find_window, font=self.font)
         self.find_entry.grid(row=0, column=1)
+
         Button(self.find_window, text="Find", font=self.font, command=self.find_in_text).grid(row=0, column=2)
         Button(self.find_window, text="Close", font=self.font, command=self.close_find_window).grid(row=1, column=1)
+
         self.find_window.mainloop()
     
     def find_in_text(self):
@@ -326,17 +313,7 @@ class FEdit:
     def exit_program(self):
         if self.file == None:
             save_file = messagebox.askyesnocancel("Warning", "File is not saved. do you want to save it before exiting?")
-            if save_file == None:
-                pass
-            elif save_file:
-                self.save()
-                self.window.quit()
-                exit()
-            elif not save_file:
-                self.window.quit()
-                exit()
-        elif open(self.fileaddr, "r", encoding=self.encoding).read() != self.text_input.get(0.0, END):
-            save_file = messagebox.askyesnocancel("Warning", "File is not saved. do you want to save it before exiting?")
+
             if save_file:
                 self.save()
                 self.window.quit()
@@ -344,6 +321,20 @@ class FEdit:
             elif not save_file:
                 self.window.quit()
                 exit()
+            elif save_file == None:
+                pass
+        elif open(self.fileaddr, "r", encoding=self.encoding).read() != self.text_input.get(0.0, END):
+            save_file = messagebox.askyesnocancel("Warning", "File is not saved. do you want to save it before exiting?")
+
+            if save_file:
+                self.save()
+                self.window.quit()
+                exit()
+            elif not save_file:
+                self.window.quit()
+                exit()
+            elif save_file == None:
+                pass
         else:
             self.window.quit()
             exit()
